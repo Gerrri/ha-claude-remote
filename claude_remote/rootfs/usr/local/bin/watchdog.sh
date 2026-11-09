@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
-# Every 30 s: keep the tmux session alive, enforce idle timeout,
+# Every 30 s: keep the tmux session alive, publish the sign-in sensor, enforce idle timeout,
 # maximum runtime and memory limits.
 set -euo pipefail
 
@@ -29,6 +29,17 @@ mem_available_mb() {
     awk '/^MemAvailable:/ { print int($2 / 1024) }' /proc/meminfo
 }
 
+# Sign-in state from remote-loop.sh as binary_sensor.claude_remote_signed_in.
+# Sent every round, because Home Assistant forgets API-set states on restart.
+publish_signed_in() {
+    local state
+    state=$(cat /tmp/signed-in 2>/dev/null) || return 0
+    ha-api.sh states/binary_sensor.claude_remote_signed_in "$(jq -nc --arg s "$state" --arg u "${LOGIN_URL:-}" \
+        '{state: $s, attributes: {friendly_name: "Claude Remote signed in", sign_in_url: $u,
+          icon: (if $s == "on" then "mdi:account-check" else "mdi:account-alert" end)}}')" \
+        2>/dev/null || true
+}
+
 ensure_session() {
     if ! tmux has-session -t claude 2>/dev/null; then
         tmux new-session -d -s claude -n remote -c "$WORKSPACE" remote-loop.sh
@@ -54,6 +65,7 @@ main() {
 
     while true; do
         ensure_session
+        publish_signed_in
         now=$(date +%s)
 
         if ((max_runtime > 0 && now - start >= max_runtime * 60)); then

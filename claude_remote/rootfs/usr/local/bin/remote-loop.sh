@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bashio
 # shellcheck shell=bash
 # Keeps `claude remote-control` running inside tmux window "remote".
-# Runs the interactive login here when needed, backs off on repeated failures.
+# Waits for the sign-in (login-server.py), backs off on repeated failures.
 set -euo pipefail
 
 # Ctrl-C stops claude, not this loop (a handler, unlike '', is not inherited).
@@ -24,22 +24,38 @@ args=(
     --remote-control-session-name-prefix "$(bashio::config 'session_name')"
 )
 
+SIGNED_IN_FILE=/tmp/signed-in # read by watchdog.sh for the Home Assistant sensor
+CONFIG="${CLAUDE_CONFIG_DIR}/.claude.json"
+
+# Answer Claude Code's one-time questions ahead: workspace trust and Remote Control consent.
+accept_prompts() {
+    [[ -f "$CONFIG" ]] || return 0
+    # shellcheck disable=SC2016 # $ws is a jq variable
+    jq -e --arg ws "$PWD" '.remoteDialogSeen and .projects[$ws].hasTrustDialogAccepted' \
+        "$CONFIG" >/dev/null && return 0
+    # shellcheck disable=SC2016
+    (umask 077 && jq --arg ws "$PWD" \
+        '.remoteDialogSeen = true | .projects[$ws].hasTrustDialogAccepted = true' \
+        "$CONFIG" >"$CONFIG.tmp")
+    mv "$CONFIG.tmp" "$CONFIG"
+}
+
 delay=5
-login_notified=false
 failure_notified=false
 
 while true; do
     if ! claude auth status >/dev/null 2>&1; then
-        if ! $login_notified; then
-            notify.sh "Claude Remote: sign-in required" \
-                "Open Claude Remote in the Home Assistant sidebar and follow the login prompt."
-            login_notified=true
-        fi
-        echo "Not signed in. Open the URL below, sign in, then paste the code here."
-        claude auth login || sleep 30
-        continue
+        echo off >"$SIGNED_IN_FILE"
+        notify.sh "Claude Remote: sign-in required" \
+            "Open Claude Remote and sign in with your Claude account." "$LOGIN_URL"
+        echo "Not signed in. Open Claude Remote in the Home Assistant sidebar to sign in."
+        until claude auth status >/dev/null 2>&1; do
+            sleep 15 || true
+        done
+        echo "Signed in."
     fi
-    login_notified=false
+    echo on >"$SIGNED_IN_FILE"
+    accept_prompts
 
     started=$(date +%s)
     nice -n 10 claude "${args[@]}" || true
@@ -52,7 +68,8 @@ while true; do
     fi
     if ((delay == 300)) && ! $failure_notified; then
         notify.sh "Claude Remote: Remote Control keeps failing" \
-            "Open Claude Remote in the sidebar or check the app log (often the memory limit)."
+            "Open the terminal in Claude Remote or check the app log (often the memory limit)." \
+            "$LOGIN_URL"
         failure_notified=true
     fi
     echo "Remote Control stopped. Restarting in ${delay}s (Ctrl-C to skip the wait)."

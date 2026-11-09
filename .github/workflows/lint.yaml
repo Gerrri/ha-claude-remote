@@ -28,3 +28,5 @@ jobs:
           tests/*.sh
       - name: Watchdog self-check
         run: tests/watchdog_test.sh
+      - name: Sign-in page self-check
+        run: tests/login_test.py
