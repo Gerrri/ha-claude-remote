@@ -1,0 +1,30 @@
+name: Lint
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  app-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: frenck/action-addon-linter@v2.21.2
+        with:
+          path: ./claude_remote
+
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Shellcheck
+        run: >-
+          shellcheck -x
+          claude_remote/rootfs/usr/local/bin/*.sh
+          claude_remote/rootfs/etc/services.d/*/run
+          tests/*.sh
+      - name: Watchdog self-check
+        run: tests/watchdog_test.sh
