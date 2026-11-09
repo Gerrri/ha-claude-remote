@@ -6,8 +6,8 @@ set -euo pipefail
 mkdir -p "$CLAUDE_CONFIG_DIR" /data/workspace
 
 # Frontend path of this app's ingress page (sign-in), for notifications and the sensor.
-LOGIN_URL="/app/$(bashio::app.slug)"
-export LOGIN_URL
+# Not `export`: with-contenv gives every script the s6 container environment only.
+printf '/app/%s' "$(bashio::app.slug)" >/run/s6/container_environment/LOGIN_URL
 
 # Names this app registered last time, so the app options stay the single source of truth.
 NAMES_FILE=/data/mcp-servers.txt

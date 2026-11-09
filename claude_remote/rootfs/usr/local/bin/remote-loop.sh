@@ -27,15 +27,18 @@ args=(
 SIGNED_IN_FILE=/tmp/signed-in # read by watchdog.sh for the Home Assistant sensor
 CONFIG="${CLAUDE_CONFIG_DIR}/.claude.json"
 
-# Answer Claude Code's one-time questions ahead: workspace trust and Remote Control consent.
+# Answer Claude Code's one-time questions ahead: first-run setup (also for `claude` in the
+# terminal), workspace trust and Remote Control consent.
 accept_prompts() {
     [[ -f "$CONFIG" ]] || return 0
     # shellcheck disable=SC2016 # $ws is a jq variable
-    jq -e --arg ws "$PWD" '.remoteDialogSeen and .projects[$ws].hasTrustDialogAccepted' \
+    jq -e --arg ws "$PWD" \
+        '.hasCompletedOnboarding and .remoteDialogSeen and .projects[$ws].hasTrustDialogAccepted' \
         "$CONFIG" >/dev/null && return 0
     # shellcheck disable=SC2016
     (umask 077 && jq --arg ws "$PWD" \
-        '.remoteDialogSeen = true | .projects[$ws].hasTrustDialogAccepted = true' \
+        '.hasCompletedOnboarding = true | .remoteDialogSeen = true
+         | .projects[$ws].hasTrustDialogAccepted = true' \
         "$CONFIG" >"$CONFIG.tmp")
     mv "$CONFIG.tmp" "$CONFIG"
 }
@@ -47,7 +50,7 @@ while true; do
     if ! claude auth status >/dev/null 2>&1; then
         echo off >"$SIGNED_IN_FILE"
         notify.sh "Claude Remote: sign-in required" \
-            "Open Claude Remote and sign in with your Claude account." "$LOGIN_URL"
+            "Open Claude Remote and sign in with your Claude account." "${LOGIN_URL:-}"
         echo "Not signed in. Open Claude Remote in the Home Assistant sidebar to sign in."
         until claude auth status >/dev/null 2>&1; do
             sleep 15 || true
@@ -69,7 +72,7 @@ while true; do
     if ((delay == 300)) && ! $failure_notified; then
         notify.sh "Claude Remote: Remote Control keeps failing" \
             "Open the terminal in Claude Remote or check the app log (often the memory limit)." \
-            "$LOGIN_URL"
+            "${LOGIN_URL:-}"
         failure_notified=true
     fi
     echo "Remote Control stopped. Restarting in ${delay}s (Ctrl-C to skip the wait)."

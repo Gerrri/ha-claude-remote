@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1
+
+- Fix: Remote Control did not start after the first sign-in. The link to the sign-in
+  page did not reach the scripts, and the Remote Control loop crashed while waiting
+  for the sign-in.
+- Claude Code's first-run setup is skipped, also for `claude` in the terminal.
+
 ## 0.2.0
 
 - Sign-in page instead of the terminal login: open the link, paste the code, done.
