@@ -1,5 +1,7 @@
 # Claude Remote Control for Home Assistant (unofficial)
 
+![Claude Remote Control for Home Assistant (unofficial)](claude_remote/logo.png)
+
 A Home Assistant app (formerly called add-on) that runs
 [Claude Code](https://code.claude.com/docs) with
 [Remote Control](https://code.claude.com/docs/en/remote-control) on your Home Assistant

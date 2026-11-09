@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- App icon and logo.
+
 ## 0.4.0
 
 - Renamed to "Claude Remote Control for Home Assistant (unofficial)". The sidebar keeps
