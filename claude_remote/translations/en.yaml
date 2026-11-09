@@ -1,0 +1,40 @@
+configuration:
+  session_name:
+    name: Session name prefix
+    description: Prefix for session names shown in the Claude app and at claude.ai/code.
+  idle_timeout_min:
+    name: Idle timeout (minutes)
+    description: Stop the app when no prompt was sent and Claude did nothing for this long. 0 = never.
+  max_runtime_min:
+    name: Maximum runtime (minutes)
+    description: Stop the app after this long, regardless of activity. 0 = unlimited.
+  permission_mode:
+    name: Permission mode
+    description: Starting permission mode of new sessions. "default" asks before every change, "plan" only plans, "acceptEdits" applies file edits without asking.
+  model:
+    name: Model
+    description: Optional model name or alias (for example "sonnet"). Empty = account default.
+  max_sessions:
+    name: Maximum concurrent sessions
+    description: Each open session is its own Claude process (roughly 200-300 MB). Keep at 1 on a Raspberry Pi.
+  max_memory_mb:
+    name: Memory limit (MB)
+    description: If all processes of this app together use more than this (RSS), Claude is stopped and restarted.
+  min_free_mb:
+    name: Minimum free host memory (MB)
+    description: If the host has less free memory than this, Claude is stopped first so Home Assistant keeps running. 0 = off.
+  enable_ha_mcp:
+    name: Enable ha-mcp
+    description: Give Claude access to Home Assistant through ha-mcp.
+  ha_mcp_transport:
+    name: ha-mcp transport
+    description: >-
+      "http" runs one ha-mcp server all the time (about 130 MB, reliable).
+      "stdio" starts ha-mcp only inside a session and saves about 130 MB while idle,
+      but ha-mcp reports known stdio connection issues.
+  extra_mcp_servers:
+    name: Extra MCP servers
+    description: List of name + JSON definition, as accepted by "claude mcp add-json".
+  notify_service:
+    name: Notify service
+    description: Optional, for example notify.mobile_app_my_phone. A persistent notification is always created.

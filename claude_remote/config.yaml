@@ -1,0 +1,46 @@
+name: Claude Remote
+version: "0.1.0"
+slug: claude_remote
+description: Claude Code Remote Control with ha-mcp, steerable from the Claude app
+# TODO: replace GITHUB_USER/REPO_NAME once the repository is public
+url: https://github.com/GITHUB_USER/REPO_NAME
+arch:
+  - aarch64
+  - amd64
+init: false
+boot: manual
+stage: experimental
+homeassistant_api: true
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:robot-outline
+panel_title: Claude Remote
+# Claude login, transcripts and settings live in /data/claude
+backup_exclude:
+  - claude
+options:
+  session_name: home-assistant
+  idle_timeout_min: 60
+  max_runtime_min: 0
+  permission_mode: default
+  max_sessions: 1
+  max_memory_mb: 1024
+  min_free_mb: 150
+  enable_ha_mcp: true
+  ha_mcp_transport: http
+  extra_mcp_servers: []
+schema:
+  session_name: str
+  idle_timeout_min: int(0,)
+  max_runtime_min: int(0,)
+  permission_mode: list(default|acceptEdits|plan)
+  model: str?
+  max_sessions: int(1,4)
+  max_memory_mb: int(512,)
+  min_free_mb: int(0,)
+  enable_ha_mcp: bool
+  ha_mcp_transport: list(http|stdio)
+  extra_mcp_servers:
+    - name: match(^[A-Za-z0-9_-]+$)
+      json: str
+  notify_service: match(^notify\.[a-z0-9_]+$)?
