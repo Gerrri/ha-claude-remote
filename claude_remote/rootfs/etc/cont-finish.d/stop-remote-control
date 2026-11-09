@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# On app stop: end Remote Control gracefully, so it stops its sessions and marks this
+# machine offline in the Claude app (reused on the next start) instead of leaving a
+# dead "online" entry behind when s6 kills everything.
+set -uo pipefail
+
+pkill -f watchdog.sh    # no new tmux windows from here on
+pkill -f remote-loop.sh # no restart of Remote Control
+pkill -TERM -f 'claude remote-control' || exit 0
+# Remote Control gives its sessions up to 30 s, then reports offline.
+for _ in $(seq 40); do
+    pgrep -f 'claude remote-control' >/dev/null || exit 0
+    sleep 1
+done
+echo "Remote Control did not stop within 40 s" >&2

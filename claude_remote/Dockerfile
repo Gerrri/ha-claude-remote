@@ -34,6 +34,7 @@ COPY rootfs /
 ENV HOME=/data \
     CLAUDE_CONFIG_DIR=/data/claude \
     DISABLE_AUTOUPDATER=1 \
+    S6_KILL_FINISH_MAXTIME=45000 \
     USE_BUILTIN_RIPGREP=0 \
     HOMEASSISTANT_URL=http://supervisor/core \
     PATH=/opt/ha-mcp/bin:$PATH

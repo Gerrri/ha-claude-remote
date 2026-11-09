@@ -1,4 +1,4 @@
-# Claude Remote for Home Assistant
+# Claude Remote Control for Home Assistant (unofficial)
 
 A Home Assistant app (formerly called add-on) that runs
 [Claude Code](https://code.claude.com/docs) with
@@ -80,7 +80,7 @@ in the cloud).
 ## Installation
 
 1. Add this repository (button or manual steps above).
-2. Install **Claude Remote**. The image is built on your device, which takes several
+2. Install **Claude Remote Control for Home Assistant (unofficial)**. The image is built on your device, which takes several
    minutes on a Raspberry Pi.
 3. Review the options (see the [app documentation](claude_remote/DOCS.md)), then start
    the app.
@@ -123,13 +123,14 @@ Three entities give you everything on a dashboard:
 
 | Entity | What it shows / does | Source |
 |---|---|---|
-| `switch.claude_remote` | On while the app runs. Turn on to start, off to stop. | Home Assistant's Supervisor integration, **disabled by default** |
+| `switch.claude_remote_control_…` | On while the app runs. Turn on to start, off to stop. | Home Assistant's Supervisor integration, **disabled by default** |
 | `binary_sensor.claude_remote_signed_in` | On while Claude is signed in. Attribute `sign_in_url` links to the sign-in page. | This app, while it runs |
 | Sign-in page | Button that opens the page from [First login](#first-login). | Dashboard card below |
 
-Enable the switch once: **Settings → Devices & services → Supervisor → Claude Remote**
+Enable the switch once: **Settings → Devices & services → Supervisor → Claude Remote Control for Home Assistant (unofficial)**
 (the device), open the disabled entity and turn on **Enabled**. Its entity ID follows
-the app name; if yours differs, pick it from the list in the card editor.
+the app name, usually `switch.claude_remote_control_for_home_assistant_unofficial`
+(older installs keep `switch.claude_remote`); pick yours from the list in the card editor.
 
 The sign-in sensor is set by the app every 30 seconds while it runs. After a Home
 Assistant restart it is missing until the app sends it again, and it keeps its last
@@ -142,7 +143,7 @@ with the app slug, which you find in the address bar when the app page is open:
 type: entities
 title: Claude Remote
 entities:
-  - entity: switch.claude_remote
+  - entity: switch.claude_remote_control_for_home_assistant_unofficial
     name: Running
   - entity: binary_sensor.claude_remote_signed_in
     name: Signed in

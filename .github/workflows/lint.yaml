@@ -25,6 +25,7 @@ jobs:
           shellcheck -x
           claude_remote/rootfs/usr/local/bin/*.sh
           claude_remote/rootfs/etc/services.d/*/run
+          claude_remote/rootfs/etc/cont-finish.d/*
           tests/*.sh
       - name: Watchdog self-check
         run: tests/watchdog_test.sh

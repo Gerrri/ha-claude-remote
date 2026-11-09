@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+- Renamed to "Claude Remote Control for Home Assistant (unofficial)". The sidebar keeps
+  the short title "Claude Remote".
+- The sign-in page shows that the login is being set up after you send the code.
+- Stopping the app (also before an uninstall) now ends Remote Control gracefully: it
+  stops its sessions and marks the machine offline in the Claude app instead of
+  leaving a dead entry. The next start reuses the same entry.
+
 ## 0.3.0
 
 - New option `language`: the language Claude answers in, for example `german`.

@@ -1,4 +1,4 @@
-# Claude Remote
+# Claude Remote Control for Home Assistant (unofficial)
 
 Runs [Claude Code](https://code.claude.com/docs) with
 [Remote Control](https://code.claude.com/docs/en/remote-control) inside Home Assistant,
@@ -21,6 +21,8 @@ through [ha-mcp](https://github.com/homeassistant-ai/ha-mcp).
    `homeassistant`, change it under **Settings → System → Network**).
 
 The app answers the workspace trust and Remote Control questions by itself. When the
+app stops, Remote Control ends its sessions and shows this machine as offline in the
+Claude app; the next start reuses the same entry. When the
 sign-in expires, you get the same notification and use the same page.
 
 The page links to a terminal with two tmux windows: `remote` (the Remote Control

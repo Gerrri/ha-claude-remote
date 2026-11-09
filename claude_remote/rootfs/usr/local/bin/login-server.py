@@ -100,6 +100,8 @@ a.button, button { display: inline-block; padding: .6rem 1rem; border-radius: .4
 button.link { background: none; color: inherit; text-decoration: underline; padding: 0; font-size: .9rem; }
 input { width: 100%; box-sizing: border-box; padding: .6rem; font-size: 1rem; margin: .4rem 0 .8rem; }
 .error { border-left: 4px solid #c0392b; padding-left: .8rem; }
+.wait { border-left: 4px solid #d97757; padding-left: .8rem; }
+button:disabled { opacity: .6; cursor: wait; }
 small { opacity: .7; }
 """
 
@@ -108,8 +110,8 @@ def page(body):
     return (
         "<!doctype html><html><head><meta charset='utf-8'>"
         "<meta name='viewport' content='width=device-width, initial-scale=1'>"
-        f"<title>Claude Remote</title><style>{STYLE}</style></head><body>"
-        f"<h1>Claude Remote</h1>{body}"
+        f"<title>Claude Remote Control for Home Assistant (unofficial)</title><style>{STYLE}</style></head><body>"
+        f"<h1>Claude Remote Control for Home Assistant (unofficial)</h1>{body}"
         "<p><small><a href='terminal/'>Open terminal</a></small></p></body></html>"
     )
 
@@ -133,8 +135,13 @@ def form_page(error=""):
         f"{error}<p><b>1.</b> Sign in with your Claude account (Pro, Max, Ultra, Team or Enterprise):</p>"
         f"<p><a class='button' href='{html.escape(login['url'])}' target='_blank' rel='noopener'>"
         "Open Claude sign-in</a></p>"
-        "<form method='post' action='code'><p><b>2.</b> Paste the code shown after sign-in:</p>"
+        "<form method='post' action='code' onsubmit=\"this.querySelector('button').disabled=true;"
+        "this.querySelector('button').textContent='Signing in…';"
+        "document.getElementById('wait').hidden=false\">"
+        "<p><b>2.</b> Paste the code shown after sign-in:</p>"
         "<input name='code' autocomplete='off' required autofocus><button>Sign in</button></form>"
+        "<p id='wait' class='wait' hidden>⏳ Setting up your Claude login. This takes a few "
+        "seconds, please keep this page open.</p>"
         "<form method='post' action='login'><button class='link'>Get a new link</button></form>"
     )
 
