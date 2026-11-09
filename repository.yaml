@@ -1,0 +1,4 @@
+name: Claude Remote for Home Assistant
+# TODO: replace GITHUB_USER/REPO_NAME once the repository is public
+url: https://github.com/GITHUB_USER/REPO_NAME
+maintainer: Gerrri
