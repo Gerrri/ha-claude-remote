@@ -1,5 +1,5 @@
 name: Claude Remote
-version: "0.1.0"
+version: "0.2.0"
 slug: claude_remote
 description: Claude Code Remote Control with ha-mcp, steerable from the Claude app
 url: https://github.com/Gerrri/ha-claude-remote

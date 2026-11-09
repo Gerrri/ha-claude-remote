@@ -11,18 +11,20 @@ through [ha-mcp](https://github.com/homeassistant-ai/ha-mcp).
 
 ## First login
 
-1. Start the app, then open **Claude Remote** in the sidebar.
-2. The terminal shows a sign-in URL. Open it, sign in with your Claude account
-   (Pro, Max, Ultra, Team or Enterprise), copy the code and paste it into the terminal.
-   If the URL is split across lines, paste it into the browser address bar anyway:
-   browsers drop the line breaks there.
-3. Answer `y` to `Trust /data/workspace?` and to `Enable Remote Control?`.
-   Both questions are asked only once.
+1. Start the app, then open **Claude Remote** in the sidebar (or click the link in the
+   "sign-in required" notification).
+2. Click **Open Claude sign-in** and sign in with your Claude account (Pro, Max, Ultra,
+   Team or Enterprise). Copy the code shown at the end.
+3. Paste the code into the field on the page and click **Sign in**.
 4. In the Claude app or at claude.ai/code, open Claude Code and start a session on
    this machine.
 
-The terminal has two tmux windows: `remote` (the Remote Control server) and `shell`.
-Switch with `Ctrl-b n`. Selecting text works with the mouse as usual.
+The app answers the workspace trust and Remote Control questions by itself. When the
+sign-in expires, you get the same notification and use the same page.
+
+The page links to a terminal with two tmux windows: `remote` (the Remote Control
+server) and `shell`. Switch with `Ctrl-b n`. Selecting text works with the mouse as
+usual.
 
 ## Options
 
@@ -72,8 +74,8 @@ Measured on amd64 while idle, before login:
 |---|---|
 | Claude Code (Remote Control server) | ~180 MB, peak ~210 MB |
 | ha-mcp (`http`) | ~130 MB |
-| ttyd, nginx, tmux | ~30 MB |
-| **Whole app** | **~310 MB** |
+| ttyd, nginx, tmux, sign-in page | ~45 MB |
+| **Whole app** | **~325 MB** |
 
 A running session adds another Claude process. Estimated at 200–300 MB, not measured.
 Large tasks can push the app above 1 GB.
@@ -92,7 +94,9 @@ This app protects the host in other ways instead:
 
 The app does not start on boot by default. Turn on **Start on boot** on the app's Info
 tab if you want that. Use `hassio.addon_start` and `hassio.addon_stop` in scripts or
-automations. When the idle timeout or `max_runtime_min` stops the app, you get a
+automations, or enable the app's switch in the Supervisor integration. The app also
+provides `binary_sensor.claude_remote_signed_in`. A dashboard card with both and a
+sign-in button is in the repository README. When the idle timeout or `max_runtime_min` stops the app, you get a
 notification. The app cannot be started from the Claude app, so start it from Home
 Assistant.
 

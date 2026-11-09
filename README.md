@@ -31,8 +31,8 @@ Claude app / claude.ai  ⇄  Anthropic servers  ⇄  Claude Remote app  →  ha-
 - ha-mcp connects to Home Assistant through the Supervisor proxy
   (`http://supervisor/core`) with the app's automatic token. No long-lived access token
   is needed.
-- A web terminal (ttyd behind nginx, Home Assistant ingress only) is used for the
-  one-time login and to watch the Remote Control server.
+- A small sign-in page (Home Assistant ingress only) handles the Claude login. A web
+  terminal (ttyd) next to it shows the Remote Control server.
 - A watchdog stops the app after an idle timeout or a maximum runtime, and stops Claude
   when memory runs low.
 
@@ -66,7 +66,7 @@ in the cloud).
 ## Requirements
 
 - Home Assistant OS or Supervised (apps are needed), on aarch64 or amd64.
-- Enough free RAM: the app uses ~310 MB while idle and can pass 1 GB during large tasks.
+- Enough free RAM: the app uses ~325 MB while idle and can pass 1 GB during large tasks.
   Raspberry Pi 4/5 with 4 GB works with the defaults (`max_sessions: 1`), 8 GB is
   comfortable, a Raspberry Pi 3 (1 GB) is not recommended. Check free memory under
   **Settings → System → Hardware** before installing.
@@ -87,20 +87,25 @@ in the cloud).
 
 ## First login
 
-1. Open **Claude Remote** in the sidebar (or **Open Web UI**).
-2. The terminal shows a sign-in URL. Open it in your browser, sign in, copy the code and
-   paste it into the terminal. If the URL is split across several lines, paste it into
-   the browser address bar anyway: browsers remove the line breaks there.
-3. Answer `y` to `Trust /data/workspace?` and `y` to `Enable Remote Control?`.
-   Both questions are asked once.
-4. Open the Claude app or claude.ai/code → Claude Code and start a session on this
-   machine. Session names start with `session_name`.
+1. Start the app. A notification **"Claude Remote: sign-in required"** appears.
+2. Click **Open Claude Remote** in the notification, or open **Claude Remote** in the
+   sidebar.
+3. Click **Open Claude sign-in**, sign in with your Claude account and copy the code
+   shown at the end.
+4. Paste the code into the field on the page and click **Sign in**.
 
-*Experimental:* the login flow was tested up to the code prompt. Everything after a
-successful sign-in could not be tested without a Claude account.
+That is all. The app accepts the workspace trust question and the Remote Control
+question by itself, and Remote Control starts within a few seconds. Open the Claude app
+or claude.ai/code → Claude Code and start a session on this machine. Session names
+start with `session_name`.
 
-The terminal is a tmux session with the windows `remote` (Remote Control server) and
-`shell`. Switch with `Ctrl-b n`.
+When the sign-in expires later, you get the same notification and use the same page.
+
+*Experimental:* the sign-in page was tested with the real `claude auth login` up to a
+rejected code. A successful sign-in could not be tested without a Claude account.
+
+The page links to a terminal: a tmux session with the windows `remote` (Remote Control
+server) and `shell`. Switch with `Ctrl-b n`.
 
 ## Options
 
@@ -108,29 +113,48 @@ All options, the `ha_mcp_transport` trade-off and the measured memory figures ar
 [app documentation](claude_remote/DOCS.md). Home Assistant shows the same text on the
 app's **Documentation** tab.
 
-## Start and stop
+## Start, stop and dashboard
 
 The app does not start on boot. Turn on **Start on boot** on the app's Info tab if you
 want that. The Claude app cannot start a stopped app, so start it from Home Assistant.
-The slug looks like `xxxxxxxx_claude_remote`; copy it from the app page URL.
 
-Script with start and stop buttons:
+Three entities give you everything on a dashboard:
+
+| Entity | What it shows / does | Source |
+|---|---|---|
+| `switch.claude_remote` | On while the app runs. Turn on to start, off to stop. | Home Assistant's Supervisor integration, **disabled by default** |
+| `binary_sensor.claude_remote_signed_in` | On while Claude is signed in. Attribute `sign_in_url` links to the sign-in page. | This app, while it runs |
+| Sign-in page | Button that opens the page from [First login](#first-login). | Dashboard card below |
+
+Enable the switch once: **Settings → Devices & services → Supervisor → Claude Remote**
+(the device), open the disabled entity and turn on **Enabled**. Its entity ID follows
+the app name; if yours differs, pick it from the list in the card editor.
+
+The sign-in sensor is set by the app every 30 seconds while it runs. After a Home
+Assistant restart it is missing until the app sends it again, and it keeps its last
+value while the app is stopped.
+
+Dashboard card (**Edit dashboard → Add card → Manual**). Replace `xxxxxxxx_claude_remote`
+with the app slug, which you find in the address bar when the app page is open:
 
 ```yaml
-script:
-  claude_remote_start:
-    alias: Start Claude Remote
-    sequence:
-      - action: hassio.addon_start
-        data:
-          addon: xxxxxxxx_claude_remote
-  claude_remote_stop:
-    alias: Stop Claude Remote
-    sequence:
-      - action: hassio.addon_stop
-        data:
-          addon: xxxxxxxx_claude_remote
+type: entities
+title: Claude Remote
+entities:
+  - entity: switch.claude_remote
+    name: Running
+  - entity: binary_sensor.claude_remote_signed_in
+    name: Signed in
+  - type: button
+    name: Sign-in page
+    icon: mdi:login
+    action_name: Open
+    tap_action:
+      action: navigate
+      navigation_path: /app/xxxxxxxx_claude_remote
 ```
+
+On older Home Assistant versions the page path is `/hassio/ingress/xxxxxxxx_claude_remote`.
 
 Automation that stops it every night:
 
@@ -148,10 +172,11 @@ automation:
 
 ## Troubleshooting
 
-- **"sign-in required" notification / login expired:** open the terminal and repeat the
-  login. `claude auth status` in the `shell` window shows the current state.
+- **"sign-in required" notification / login expired:** open the sign-in page and sign in
+  again. `claude auth status` in the terminal's `shell` window shows the current state.
+- **"That code wasn't accepted":** the code is single-use and belongs to one link. The
+  page shows a new link; sign in again with it and paste the new code.
 - **Session does not appear in the Claude app:** look at the `remote` window.
-  - Unanswered trust or confirmation questions block the start.
   - On Team or Enterprise, Remote Control must be enabled by an owner.
   - Plain API keys do not work.
   - After a network outage of more than ~10 minutes the server exits and restarts by
