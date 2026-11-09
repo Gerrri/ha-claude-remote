@@ -1,0 +1,14 @@
+#!/usr/bin/with-contenv bashio
+# shellcheck shell=bash
+# ha-mcp as one shared HTTP server on loopback (transport "http").
+set -euo pipefail
+
+if ! bashio::config.true 'enable_ha_mcp' \
+    || [[ "$(bashio::config 'ha_mcp_transport')" != http ]]; then
+    exec sleep infinity # disabled: idle instead of exiting, so s6 does not restart it
+fi
+
+{ echo 1000 >/proc/self/oom_score_adj; } 2>/dev/null || true # some kernels apply it but report EINVAL
+export HOMEASSISTANT_TOKEN="${SUPERVISOR_TOKEN}" \
+    MCP_HOST=127.0.0.1 MCP_PORT=8086 HA_MCP_DISABLE_SETTINGS_UI=1
+exec nice -n 10 ha-mcp-web
