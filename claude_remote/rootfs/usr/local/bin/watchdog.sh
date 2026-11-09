@@ -17,10 +17,11 @@ last_activity() {
     echo $((newest > $1 ? newest : $1))
 }
 
-# Sum of RSS of all processes in this container, in MB.
+# Sum of private (anonymous) RSS of all processes in this container, in MB.
+# Not VmRSS: it counts shared pages, like the claude binary, once per process.
 container_rss_mb() {
     { cat /proc/[0-9]*/status 2>/dev/null || true; } \
-        | awk '/^VmRSS:/ { s += $2 } END { print int(s / 1024) }'
+        | awk '/^RssAnon:/ { s += $2 } END { print int(s / 1024) }'
 }
 
 # MemAvailable of the host (/proc/meminfo is not namespaced), in MB.

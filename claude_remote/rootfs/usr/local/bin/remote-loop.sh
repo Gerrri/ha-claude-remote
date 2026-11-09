@@ -52,7 +52,7 @@ while true; do
     fi
     if ((delay == 300)) && ! $failure_notified; then
         notify.sh "Claude Remote: Remote Control keeps failing" \
-            "Open Claude Remote in the sidebar to see the error."
+            "Open Claude Remote in the sidebar or check the app log (often the memory limit)."
         failure_notified=true
     fi
     echo "Remote Control stopped. Restarting in ${delay}s (Ctrl-C to skip the wait)."

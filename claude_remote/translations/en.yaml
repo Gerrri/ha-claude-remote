@@ -19,7 +19,7 @@ configuration:
     description: Each open session is its own Claude process (roughly 200-300 MB). Keep at 1 on a Raspberry Pi.
   max_memory_mb:
     name: Memory limit (MB)
-    description: If all processes of this app together use more than this (RSS), Claude is stopped and restarted.
+    description: If all processes of this app together use more private memory than this (RSS without shared pages), Claude is stopped and restarted.
   min_free_mb:
     name: Minimum free host memory (MB)
     description: If the host has less free memory than this, Claude is stopped first so Home Assistant keeps running. 0 = off.
