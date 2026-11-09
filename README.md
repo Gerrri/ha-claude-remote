@@ -96,8 +96,9 @@ in the cloud).
 
 That is all. The app accepts the workspace trust question and the Remote Control
 question by itself, and Remote Control starts within a few seconds. Open the Claude app
-or claude.ai/code → Claude Code and start a session on this machine. Session names
-start with `session_name`.
+or claude.ai/code → Claude Code and start a session on this machine. The machine is
+listed under the host name of Home Assistant (default `homeassistant`, change it under
+**Settings → System → Network**). Session names start with `session_name`.
 
 When the sign-in expires later, you get the same notification and use the same page.
 

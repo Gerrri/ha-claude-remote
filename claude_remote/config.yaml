@@ -1,5 +1,5 @@
 name: Claude Remote
-version: "0.2.1"
+version: "0.2.2"
 slug: claude_remote
 description: Claude Code Remote Control with ha-mcp, steerable from the Claude app
 url: https://github.com/Gerrri/ha-claude-remote
@@ -10,6 +10,8 @@ init: false
 boot: manual
 stage: experimental
 homeassistant_api: true
+# Host name instead of the random container name: Remote Control shows it as the machine name
+host_uts: true
 ingress: true
 panel_icon: mdi:robot-outline
 panel_title: Claude Remote

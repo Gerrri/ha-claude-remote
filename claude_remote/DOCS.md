@@ -17,7 +17,8 @@ through [ha-mcp](https://github.com/homeassistant-ai/ha-mcp).
    Team or Enterprise). Copy the code shown at the end.
 3. Paste the code into the field on the page and click **Sign in**.
 4. In the Claude app or at claude.ai/code, open Claude Code and start a session on
-   this machine.
+   this machine. It is listed under the host name of Home Assistant (default
+   `homeassistant`, change it under **Settings → System → Network**).
 
 The app answers the workspace trust and Remote Control questions by itself. When the
 sign-in expires, you get the same notification and use the same page.

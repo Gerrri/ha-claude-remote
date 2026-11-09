@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2
+
+- The Claude app shows this machine under the Home Assistant host name (default
+  `homeassistant`) instead of the random container name.
+
 ## 0.2.1
 
 - Fix: Remote Control did not start after the first sign-in. The link to the sign-in
