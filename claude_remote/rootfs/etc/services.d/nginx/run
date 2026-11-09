@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+{ echo 1000 >/proc/self/oom_score_adj; } 2>/dev/null || true # some kernels apply it but report EINVAL
+exec nginx -c /etc/nginx/claude-remote.conf

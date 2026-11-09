@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Web terminal on loopback only; nginx in front lets only the ingress proxy in.
+set -euo pipefail
+
+{ echo 1000 >/proc/self/oom_score_adj; } 2>/dev/null || true # some kernels apply it but report EINVAL
+exec ttyd --interface lo --port 7681 --writable tmux attach-session -t claude
