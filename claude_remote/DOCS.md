@@ -29,17 +29,28 @@ Switch with `Ctrl-b n`. Selecting text works with the mouse as usual.
 | Option | Default | Description |
 |---|---|---|
 | `session_name` | `home-assistant` | Prefix of session names in the Claude app. |
-| `idle_timeout_min` | `60` | Stop the app after this many minutes without a prompt or Claude activity. `0` = never. |
+| `idle_timeout_min` | `60` | Stop the app after this many minutes without a prompt or Claude activity. `0` = never. *Experimental:* activity is the modification time of the session transcripts. |
 | `max_runtime_min` | `0` | Stop the app after this many minutes. `0` = unlimited. |
 | `permission_mode` | `default` | `default` asks before every change, `plan` only plans, `acceptEdits` applies file edits without asking. |
 | `model` | (empty) | Optional model or alias, for example `sonnet`. |
 | `max_sessions` | `1` | Concurrent sessions. Each one is its own Claude process. |
-| `max_memory_mb` | `1024` | Stop Claude if all processes of this app together use more (RSS). |
+| `max_memory_mb` | `1024` | Stop Claude if all processes of this app together use more private memory (RSS without shared pages). |
 | `min_free_mb` | `150` | Stop Claude if the host has less free memory, so Home Assistant keeps running. `0` = off. |
 | `enable_ha_mcp` | `true` | Give Claude access to Home Assistant through ha-mcp. |
 | `ha_mcp_transport` | `http` | `http` or `stdio`, see below. |
 | `extra_mcp_servers` | `[]` | List of `name` + `json`, as accepted by `claude mcp add-json`. |
 | `notify_service` | (empty) | For example `notify.mobile_app_my_phone`. A persistent notification is always created. |
+
+Example for `extra_mcp_servers`:
+
+```yaml
+- name: my-server
+  json: '{"type":"http","url":"http://my-mcp-server.example:8080/mcp"}'
+```
+
+The ha-mcp server is pre-configured as `home-assistant`. If you already run the official
+ha-mcp app or integration, set `enable_ha_mcp: false` and add it here instead. Do not
+connect both, which ha-mcp says can cause hangs.
 
 ### `ha_mcp_transport`: memory versus reliability
 
@@ -66,6 +77,16 @@ Measured on amd64 while idle, before login:
 
 A running session adds another Claude process. Estimated at 200–300 MB, not measured.
 Large tasks can push the app above 1 GB.
+
+Home Assistant apps cannot set Docker memory limits through their configuration.
+This app protects the host in other ways instead:
+
+- Claude, ha-mcp, ttyd and nginx run with `oom_score_adj=1000`, so the kernel's OOM
+  killer ends them first, before Home Assistant.
+- Claude and ha-mcp run with lower CPU priority (`nice`).
+- The watchdog stops Claude when the app's private memory exceeds `max_memory_mb`, or
+  when the host's free memory drops below `min_free_mb`. Claude restarts automatically
+  once memory is available again.
 
 ## Starting and stopping
 

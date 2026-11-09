@@ -63,34 +63,13 @@ Before the first use, create a full backup: **Settings → System → Backups �
 now**. Ideally make it encrypted and store it off the device (for example on a NAS or
 in the cloud).
 
-## Memory (RAM)
-
-Check free memory before installing (**Settings → System → Hardware**, or a system
-monitor app).
-
-| Situation | RAM used by this app |
-|---|---|
-| Idle, no session open (measured on amd64) | ~310 MB, or ~180 MB with `ha_mcp_transport: stdio` |
-| One active session (estimate, not measured) | ~500–700 MB |
-| Peaks during large tasks (estimate) | over 1 GB |
-
-- Raspberry Pi 3 (1 GB): **not recommended.**
-- Raspberry Pi 4/5 with 4 GB: workable with the defaults (`max_sessions: 1`).
-- 8 GB: comfortable.
-
-Home Assistant apps cannot set Docker memory limits through their configuration.
-This app protects the host in other ways instead:
-
-- All of its processes run with `oom_score_adj=1000`, so the kernel's OOM killer
-  ends them first, before Home Assistant.
-- Claude and ha-mcp run with lower CPU priority (`nice`).
-- The watchdog stops Claude when the app's total RSS exceeds `max_memory_mb`, or when
-  the host's free memory drops below `min_free_mb`. Claude restarts automatically
-  once memory is available again.
-
 ## Requirements
 
 - Home Assistant OS or Supervised (apps are needed), on aarch64 or amd64.
+- Enough free RAM: the app uses ~310 MB while idle and can pass 1 GB during large tasks.
+  Raspberry Pi 4/5 with 4 GB works with the defaults (`max_sessions: 1`), 8 GB is
+  comfortable, a Raspberry Pi 3 (1 GB) is not recommended. Check free memory under
+  **Settings → System → Hardware** before installing.
 - A Claude **Pro, Max, Ultra, Team or Enterprise** subscription. On Team and
   Enterprise an owner must enable Remote Control in the Claude Code admin settings.
 - An API key is **not** enough. `claude setup-token` / `CLAUDE_CODE_OAUTH_TOKEN` do
@@ -103,7 +82,8 @@ This app protects the host in other ways instead:
 1. Add this repository (button or manual steps above).
 2. Install **Claude Remote**. The image is built on your device, which takes several
    minutes on a Raspberry Pi.
-3. Review the options (see below), then start the app.
+3. Review the options (see the [app documentation](claude_remote/DOCS.md)), then start
+   the app.
 
 ## First login
 
@@ -122,33 +102,11 @@ successful sign-in could not be tested without a Claude account.
 The terminal is a tmux session with the windows `remote` (Remote Control server) and
 `shell`. Switch with `Ctrl-b n`.
 
-## Configuration
+## Options
 
-| Option | Default | Description |
-|---|---|---|
-| `session_name` | `home-assistant` | Prefix of session names shown in the Claude app. |
-| `idle_timeout_min` | `60` | Stop the app after this many minutes without a prompt or Claude activity. `0` = never. *Experimental:* activity is the modification time of the session transcripts. |
-| `max_runtime_min` | `0` | Stop the app after this many minutes. `0` = unlimited. |
-| `permission_mode` | `default` | `default`, `acceptEdits` or `plan`. |
-| `model` | (empty) | Optional model or alias, for example `sonnet`. |
-| `max_sessions` | `1` | Concurrent sessions. Each open session is its own Claude process (~200–300 MB, estimate). |
-| `max_memory_mb` | `1024` | Stop Claude when the app's total RSS exceeds this. |
-| `min_free_mb` | `150` | Stop Claude when the host has less free memory. `0` = off. |
-| `enable_ha_mcp` | `true` | Connect ha-mcp. |
-| `ha_mcp_transport` | `http` | `http`: one shared ha-mcp server on loopback (~130 MB always). `stdio`: ha-mcp runs only inside a session, saving ~130 MB while idle, but ha-mcp reports known stdio issues. |
-| `extra_mcp_servers` | `[]` | List of `{name, json}`. `json` is passed to `claude mcp add-json`. |
-| `notify_service` | (empty) | For example `notify.mobile_app_my_phone`. A persistent notification is always created. |
-
-Example for `extra_mcp_servers`:
-
-```yaml
-- name: my-server
-  json: '{"type":"http","url":"http://my-mcp-server.example:8080/mcp"}'
-```
-
-The ha-mcp server is pre-configured as `home-assistant`. If you already run the official
-ha-mcp app or integration, set `enable_ha_mcp: false` and add it here instead. Do not
-connect both, which ha-mcp says can cause hangs.
+All options, the `ha_mcp_transport` trade-off and the measured memory figures are in the
+[app documentation](claude_remote/DOCS.md). Home Assistant shows the same text on the
+app's **Documentation** tab.
 
 ## Start and stop
 
