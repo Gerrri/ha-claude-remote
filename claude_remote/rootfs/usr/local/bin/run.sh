@@ -9,6 +9,28 @@ mkdir -p "$CLAUDE_CONFIG_DIR" /data/workspace
 # Not `export`: with-contenv gives every script the s6 container environment only.
 printf '/app/%s' "$(bashio::app.slug)" >/run/s6/container_environment/LOGIN_URL
 
+# Claude Code user settings owned by the app options: response language and the rtk hook.
+SETTINGS="${CLAUDE_CONFIG_DIR}/settings.json"
+[[ -s "$SETTINGS" ]] || echo '{}' >"$SETTINGS"
+language=""
+bashio::config.has_value 'language' && language="$(bashio::config 'language')"
+rtk=false
+bashio::config.true 'enable_rtk' && rtk=true
+# shellcheck disable=SC2016 # jq variables
+if jq --arg lang "$language" --argjson rtk "$rtk" '
+    (if $lang == "" then del(.language) else .language = $lang end)
+    | .hooks.PreToolUse = [(.hooks.PreToolUse // [])[]
+        | select(all(.hooks[]?; .command != "rtk hook claude"))]
+      + (if $rtk then [{matcher: "Bash", hooks: [{type: "command", command: "rtk hook claude"}]}]
+         else [] end)
+    | if .hooks.PreToolUse == [] then del(.hooks.PreToolUse) else . end
+    | if .hooks == {} then del(.hooks) else . end' "$SETTINGS" >"$SETTINGS.tmp"; then
+    mv "$SETTINGS.tmp" "$SETTINGS"
+else
+    rm -f "$SETTINGS.tmp"
+    bashio::log.warning "Could not update ${SETTINGS}; language and rtk options not applied"
+fi
+
 # Names this app registered last time, so the app options stay the single source of truth.
 NAMES_FILE=/data/mcp-servers.txt
 

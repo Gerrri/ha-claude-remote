@@ -14,6 +14,9 @@ configuration:
   model:
     name: Model
     description: Optional model name or alias (for example "sonnet"). Empty = account default.
+  language:
+    name: Language
+    description: Optional language Claude answers in, for example "german" or "english". Empty = Claude decides.
   max_sessions:
     name: Maximum concurrent sessions
     description: Each open session is its own Claude process (roughly 200-300 MB). Keep at 1 on a Raspberry Pi.
@@ -32,9 +35,9 @@ configuration:
       "http" runs one ha-mcp server all the time (about 130 MB, reliable).
       "stdio" starts ha-mcp only inside a session and saves about 130 MB while idle,
       but ha-mcp reports known stdio connection issues.
+  enable_rtk:
+    name: Save tokens with rtk
+    description: Shortens the output of shell commands (git, ls, test runners, ...) before Claude reads it. Turn off if a command behaves differently than expected.
   extra_mcp_servers:
     name: Extra MCP servers
     description: List of name + JSON definition, as accepted by "claude mcp add-json".
-  notify_service:
-    name: Notify service
-    description: Optional, for example notify.mobile_app_my_phone. A persistent notification is always created.

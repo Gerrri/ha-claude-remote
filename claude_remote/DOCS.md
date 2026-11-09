@@ -36,13 +36,14 @@ usual.
 | `max_runtime_min` | `0` | Stop the app after this many minutes. `0` = unlimited. |
 | `permission_mode` | `default` | `default` asks before every change, `plan` only plans, `acceptEdits` applies file edits without asking. |
 | `model` | (empty) | Optional model or alias, for example `sonnet`. |
+| `language` | (empty) | Language Claude answers in, for example `german`. Empty = Claude decides. Written to Claude Code's `language` setting at every start. |
 | `max_sessions` | `1` | Concurrent sessions. Each one is its own Claude process. |
 | `max_memory_mb` | `1024` | Stop Claude if all processes of this app together use more private memory (RSS without shared pages). |
 | `min_free_mb` | `150` | Stop Claude if the host has less free memory, so Home Assistant keeps running. `0` = off. |
 | `enable_ha_mcp` | `true` | Give Claude access to Home Assistant through ha-mcp. |
 | `ha_mcp_transport` | `http` | `http` or `stdio`, see below. |
+| `enable_rtk` | `true` | Save tokens: [rtk](https://github.com/rtk-ai/rtk) shortens the output of shell commands (git, ls, test runners, ...) before Claude reads it. Turn off if a command behaves differently than expected. |
 | `extra_mcp_servers` | `[]` | List of `name` + `json`, as accepted by `claude mcp add-json`. |
-| `notify_service` | (empty) | For example `notify.mobile_app_my_phone`. A persistent notification is always created. |
 
 Example for `extra_mcp_servers`:
 

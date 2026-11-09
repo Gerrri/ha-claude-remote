@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- New option `language`: the language Claude answers in, for example `german`.
+- New option `enable_rtk` (on by default): [rtk](https://github.com/rtk-ai/rtk) 1.2.0
+  (Apache-2.0 edition) shortens shell command output to save tokens.
+- Removed option `notify_service`. Notifications appear as persistent notifications in
+  Home Assistant.
+
 ## 0.2.2
 
 - The Claude app shows this machine under the Home Assistant host name (default

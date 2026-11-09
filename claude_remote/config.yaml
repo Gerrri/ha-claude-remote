@@ -1,5 +1,5 @@
 name: Claude Remote
-version: "0.2.2"
+version: "0.3.0"
 slug: claude_remote
 description: Claude Code Remote Control with ha-mcp, steerable from the Claude app
 url: https://github.com/Gerrri/ha-claude-remote
@@ -28,6 +28,7 @@ options:
   min_free_mb: 150
   enable_ha_mcp: true
   ha_mcp_transport: http
+  enable_rtk: true
   extra_mcp_servers: []
 schema:
   session_name: str
@@ -35,12 +36,13 @@ schema:
   max_runtime_min: int(0,)
   permission_mode: list(default|acceptEdits|plan)
   model: str?
+  language: str?
   max_sessions: int(1,4)
   max_memory_mb: int(512,)
   min_free_mb: int(0,)
   enable_ha_mcp: bool
   ha_mcp_transport: list(http|stdio)
+  enable_rtk: bool
   extra_mcp_servers:
     - name: match(^[A-Za-z0-9_-]+$)
       json: str
-  notify_service: match(^notify\.[a-z0-9_]+$)?

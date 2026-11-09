@@ -195,6 +195,8 @@ automation:
   contributors. Thank you for the MCP server that makes Home Assistant usable for Claude.
 - [Claude Code](https://code.claude.com/docs) and
   [Remote Control](https://code.claude.com/docs/en/remote-control) by Anthropic.
+- [rtk](https://github.com/rtk-ai/rtk) (Apache-2.0 edition) by rtk-ai, which shortens
+  command output for Claude.
 - [Home Assistant community app base image](https://github.com/hassio-addons/app-base),
   [ttyd](https://github.com/tsl0922/ttyd), tmux and nginx.
 
