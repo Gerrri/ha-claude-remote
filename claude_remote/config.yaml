@@ -2,8 +2,7 @@ name: Claude Remote
 version: "0.1.0"
 slug: claude_remote
 description: Claude Code Remote Control with ha-mcp, steerable from the Claude app
-# TODO: replace GITHUB_USER/REPO_NAME once the repository is public
-url: https://github.com/GITHUB_USER/REPO_NAME
+url: https://github.com/Gerrri/ha-claude-remote
 arch:
   - aarch64
   - amd64

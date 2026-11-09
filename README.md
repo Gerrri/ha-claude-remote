@@ -12,11 +12,10 @@ Home Assistant through [ha-mcp](https://github.com/homeassistant-ai/ha-mcp).
 **Status: experimental.** Parts marked *experimental* below could not be tested without
 a real Home Assistant instance and a Claude account.
 
-<!-- TODO: replace GITHUB_USER/REPO_NAME once the repository is public -->
-[![Open your Home Assistant instance and show the add app repository dialog with this repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FGITHUB_USER%2FREPO_NAME)
+[![Open your Home Assistant instance and show the add app repository dialog with this repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FGerrri%2Fha-claude-remote)
 
 Manual: **Settings → Apps → App store → ⋮ (top right) → Repositories**, then add
-`https://github.com/GITHUB_USER/REPO_NAME`. Older Home Assistant versions call this
+`https://github.com/Gerrri/ha-claude-remote`. Older Home Assistant versions call this
 **Settings → Add-ons → Add-on store**.
 
 ## What it does
