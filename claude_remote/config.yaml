@@ -1,5 +1,5 @@
 name: Claude Remote Control for Home Assistant (unofficial)
-version: "0.5.1"
+version: "0.5.2"
 slug: claude_remote
 description: Claude Code Remote Control with ha-mcp, steerable from the Claude app
 url: https://github.com/Gerrri/ha-claude-remote

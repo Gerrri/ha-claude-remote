@@ -44,6 +44,18 @@ accept_prompts() {
     mv "$CONFIG.tmp" "$CONFIG"
 }
 
+# The fixed session connects to its MCP servers right at start. Give the ha-mcp HTTP
+# server (an s6 service, slow to boot on a Pi) time to come up first.
+wait_for_ha_mcp() {
+    bashio::config.true 'enable_ha_mcp' \
+        && [[ "$(bashio::config 'ha_mcp_transport')" == http ]] || return 0
+    for _ in $(seq 60); do
+        curl -s -o /dev/null -m 2 http://127.0.0.1:8086/mcp && return 0
+        sleep 2 || true
+    done
+    echo "ha-mcp did not answer within 2 minutes; starting Remote Control anyway."
+}
+
 delay=5
 failure_notified=false
 
@@ -65,6 +77,7 @@ while true; do
     # environment meanwhile, Remote Control registers a new one by itself.
     # shortcut: relies on Claude Code's internal pointer file, recheck on Claude Code updates.
     touch -c "$CLAUDE_CONFIG_DIR"/projects/*/bridge-pointer.json
+    wait_for_ha_mcp
 
     started=$(date +%s)
     nice -n 10 claude "${args[@]}" || true

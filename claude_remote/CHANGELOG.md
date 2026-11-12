@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.2
+
+- Fix: Home Assistant tools (ha-mcp) were missing in the fixed session after a start.
+  The session connected before the ha-mcp server was up (about 9 s on amd64, longer
+  on a Pi). Remote Control now waits for ha-mcp, at most 2 minutes.
+
 ## 0.5.1
 
 - Fix: chats did not survive a restart. Remote Control now keeps one fixed session
