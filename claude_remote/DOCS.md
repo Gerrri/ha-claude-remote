@@ -22,7 +22,10 @@ through [ha-mcp](https://github.com/homeassistant-ai/ha-mcp).
 
 The app answers the workspace trust and Remote Control questions by itself. When the
 app stops, Remote Control ends its sessions and shows this machine as offline in the
-Claude app; the next start reuses the same entry. When the
+Claude app; the next start reconnects the same entry with its sessions, so your chats
+are still there. Finish a task, then send `/clear` (or start a new session) for the
+next one. The **Sign out** button on the page stops Remote Control and removes the
+Claude login. When the
 sign-in expires, you get the same notification and use the same page.
 
 The page links to a terminal with two tmux windows: `remote` (the Remote Control

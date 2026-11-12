@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0
+
+- Chats survive app restarts, also after more than 4 hours: the app keeps Claude Code's
+  pointer to the Remote Control environment fresh, so the next start reconnects it.
+- **Sign out** button on the page when signed in. It stops Remote Control gracefully,
+  then removes the login.
+- README: new Installation, Setup and Daily use sections.
+
 ## 0.4.1
 
 - App icon and logo.

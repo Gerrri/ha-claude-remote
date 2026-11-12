@@ -59,6 +59,11 @@ while true; do
     fi
     echo on >"$SIGNED_IN_FILE"
     accept_prompts
+    # Keep the Remote Control environment, and with it the chats, across app restarts:
+    # Claude Code drops its pointer after 4 h without a write. If the server dropped the
+    # environment meanwhile, Remote Control registers a new one by itself.
+    # shortcut: relies on Claude Code's internal pointer file, recheck on Claude Code updates.
+    touch -c "$CLAUDE_CONFIG_DIR"/projects/*/bridge-pointer.json
 
     started=$(date +%s)
     nice -n 10 claude "${args[@]}" || true

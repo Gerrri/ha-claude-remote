@@ -92,6 +92,20 @@ def submit(code):
     return ok, answer.splitlines()[-1]
 
 
+REMOTE_CONTROL = "claude remote-control"  # pgrep/pkill pattern
+
+
+def sign_out():
+    """Stop Remote Control first, so it reports offline with its still valid token, then
+    sign out before remote-loop.sh restarts it (it waits at least 5 s)."""
+    subprocess.run(["pkill", "-TERM", "-f", REMOTE_CONTROL])
+    end = time.monotonic() + 40
+    while time.monotonic() < end and subprocess.run(
+            ["pgrep", "-f", REMOTE_CONTROL], capture_output=True).returncode == 0:
+        time.sleep(0.5)
+    subprocess.run(["claude", "auth", "logout"], capture_output=True)
+
+
 STYLE = """
 :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
 body { max-width: 34rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
@@ -120,6 +134,10 @@ def signed_in_page():
     return page(
         "<p>✅ Signed in. Remote Control starts by itself within a few seconds. "
         "Open Claude Code in the Claude app or at claude.ai/code.</p>"
+        "<form method='post' action='logout' onsubmit=\"this.querySelector('button').disabled=true;"
+        "this.querySelector('button').textContent='Signing out…'\">"
+        "<button>Sign out</button></form>"
+        "<p><small>Stops Remote Control and removes the Claude login from this app.</small></p>"
         "<form method='post' action='login'><button class='link'>Sign in again</button></form>"
     )
 
@@ -162,6 +180,9 @@ class Handler(BaseHTTPRequestHandler):
         fields = parse_qs(self.rfile.read(length).decode())
         if self.path == "/login":
             start()
+            return self.redirect()
+        if self.path == "/logout":
+            sign_out()
             return self.redirect()
         if self.path != "/code":
             return self.send_error(404)

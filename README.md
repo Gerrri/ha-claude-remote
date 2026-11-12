@@ -14,11 +14,7 @@ Home Assistant through [ha-mcp](https://github.com/homeassistant-ai/ha-mcp).
 **Status: experimental.** Parts marked *experimental* below could not be tested without
 a real Home Assistant instance and a Claude account.
 
-[![Open your Home Assistant instance and show the add app repository dialog with this repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FGerrri%2Fha-claude-remote)
-
-Manual: **Settings → Apps → App store → ⋮ (top right) → Repositories**, then add
-`https://github.com/Gerrri/ha-claude-remote`. Older Home Assistant versions call this
-**Settings → Add-ons → Add-on store**.
+**Get started:** [Installation](#installation) · [Setup](#setup) · [Daily use](#daily-use)
 
 ## What it does
 
@@ -81,34 +77,60 @@ in the cloud).
 
 ## Installation
 
-1. Add this repository (button or manual steps above).
-2. Install **Claude Remote Control for Home Assistant (unofficial)**. The image is built on your device, which takes several
-   minutes on a Raspberry Pi.
-3. Review the options (see the [app documentation](claude_remote/DOCS.md)), then start
-   the app.
+1. Add this repository to Home Assistant. Click the button:
 
-## First login
+   [![Open your Home Assistant instance and show the add app repository dialog with this repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FGerrri%2Fha-claude-remote)
 
-1. Start the app. A notification **"Claude Remote: sign-in required"** appears.
-2. Click **Open Claude Remote** in the notification, or open **Claude Remote** in the
-   sidebar.
-3. Click **Open Claude sign-in**, sign in with your Claude account and copy the code
-   shown at the end.
-4. Paste the code into the field on the page and click **Sign in**.
+   Or add it by hand: **Settings → Apps → App store → ⋮ (top right) → Repositories**,
+   then add `https://github.com/Gerrri/ha-claude-remote`. Older Home Assistant versions
+   call this **Settings → Add-ons → Add-on store**.
+2. Search the app store for **Claude Remote Control for Home Assistant (unofficial)** and
+   click **Install**. The image is built on your device, which takes several minutes on
+   a Raspberry Pi.
 
-That is all. The app accepts the workspace trust question and the Remote Control
-question by itself, and Remote Control starts within a few seconds. Open the Claude app
-or claude.ai/code → Claude Code and start a session on this machine. The machine is
-listed under the host name of Home Assistant (default `homeassistant`, change it under
-**Settings → System → Network**). Session names start with `session_name`.
+Updates show up on the app page by themselves. To look right away, use
+**App store → ⋮ → Check for updates**.
 
-When the sign-in expires later, you get the same notification and use the same page.
+## Setup
+
+1. **Options.** Open the app's **Configuration** tab. Most people only change these:
+   - `language`: the language Claude answers in, for example `german`.
+   - `permission_mode`: `default` asks before every change. Keep it for a start.
+   - `idle_timeout_min`: the app stops after this many idle minutes (`0` = never).
+
+   All options are explained in the [app documentation](claude_remote/DOCS.md).
+2. **Start** the app on its **Info** tab. A notification **"Claude Remote: sign-in
+   required"** appears.
+3. **Sign in.** Click **Open Claude Remote** in the notification, or open **Claude
+   Remote** in the sidebar. Click **Open Claude sign-in**, sign in with your Claude
+   account and copy the code shown at the end. Paste it into the field on the page and
+   click **Sign in**.
+4. **Start a session.** Open the Claude app or claude.ai/code → Claude Code and start a
+   session on this machine. It is listed under the host name of Home Assistant (default
+   `homeassistant`, change it under **Settings → System → Network**).
+5. Optional: add the [dashboard card](#start-stop-and-dashboard) and turn on **Start on
+   boot** on the Info tab.
+
+The app answers Claude Code's first-run, workspace trust and Remote Control questions by
+itself, so Remote Control starts within a few seconds after the sign-in. When the
+sign-in expires later, you get the same notification and use the same page.
 
 *Experimental:* the sign-in page was tested with the real `claude auth login` up to a
 rejected code. A successful sign-in could not be tested without a Claude account.
 
-The page links to a terminal: a tmux session with the windows `remote` (Remote Control
-server) and `shell`. Switch with `Ctrl-b n`.
+## Daily use
+
+- **Chats survive restarts.** When the app stops, Remote Control marks this machine as
+  offline. The next start reconnects the same machine with its sessions, so you can go
+  on where you stopped. *Experimental:* tested up to the restart, not with a Claude
+  account.
+- **One task, then `/clear`.** Finish a task in a session, then send `/clear` to start
+  the next one with an empty context. That keeps answers focused and saves tokens.
+  Starting a new session in the Claude app works too.
+- **Sign out.** The Claude Remote page has a **Sign out** button. It stops Remote
+  Control and removes the Claude login from the app.
+- **Terminal.** The page links to a terminal: a tmux session with the windows `remote`
+  (Remote Control server) and `shell`. Switch with `Ctrl-b n`.
 
 ## Options
 
@@ -127,7 +149,7 @@ Three entities give you everything on a dashboard:
 |---|---|---|
 | `switch.claude_remote_control_…` | On while the app runs. Turn on to start, off to stop. | Home Assistant's Supervisor integration, **disabled by default** |
 | `binary_sensor.claude_remote_signed_in` | On while Claude is signed in. Attribute `sign_in_url` links to the sign-in page. | This app, while it runs |
-| Sign-in page | Button that opens the page from [First login](#first-login). | Dashboard card below |
+| Sign-in page | Button that opens the page from [Setup](#setup). | Dashboard card below |
 
 Enable the switch once: **Settings → Devices & services → Supervisor → Claude Remote Control for Home Assistant (unofficial)**
 (the device), open the disabled entity and turn on **Enabled**. Its entity ID follows
