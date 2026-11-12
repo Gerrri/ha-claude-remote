@@ -56,6 +56,9 @@ stop_app() {
 }
 
 main() {
+    # This is the container's CMD: its exit code becomes the app's. Exit 0 on app stop,
+    # else Home Assistant shows the stopped app as failed (143 = killed by SIGTERM).
+    trap 'exit 0' TERM
     local start now idle max_runtime max_mem min_free rss avail last_mem_notify=0
     start=$(date +%s)
     idle=$(bashio::config 'idle_timeout_min')
@@ -87,7 +90,8 @@ main() {
             fi
         fi
 
-        sleep 30
+        sleep 30 &
+        wait $! || true # in the background, so the TERM trap runs at once
     done
 }
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.3
+
+- Fix: Home Assistant showed the app as failed after every stop (exit code 143). The
+  watchdog, the app's main process, now exits cleanly when the app stops.
+
 ## 0.5.2
 
 - Fix: Home Assistant tools (ha-mcp) were missing in the fixed session after a start.
