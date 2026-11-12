@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1
+
+- Fix: chats did not survive a restart. Remote Control now keeps one fixed session
+  (Claude Code's default), resumes it after a restart and shows it as offline while
+  the app is stopped. Before, `--no-create-session-in-dir` made Remote Control skip
+  its saved environment, so every start began from scratch.
+
 ## 0.5.0
 
 - Chats survive app restarts, also after more than 4 hours: the app keeps Claude Code's

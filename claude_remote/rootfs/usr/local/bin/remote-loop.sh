@@ -17,8 +17,9 @@ if bashio::config.has_value 'model'; then
 fi
 
 args=(
+    # Default "create session in dir": one fixed session that Remote Control resumes after a
+    # restart (shown offline meanwhile). Without it, every start gets a new environment.
     remote-control
-    --no-create-session-in-dir
     --capacity "$(bashio::config 'max_sessions')"
     --permission-mode "$(bashio::config 'permission_mode')"
     --remote-control-session-name-prefix "$(bashio::config 'session_name')"

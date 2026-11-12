@@ -120,10 +120,10 @@ rejected code. A successful sign-in could not be tested without a Claude account
 
 ## Daily use
 
-- **Chats survive restarts.** When the app stops, Remote Control marks this machine as
-  offline. The next start reconnects the same machine with its sessions, so you can go
-  on where you stopped. *Experimental:* tested up to the restart, not with a Claude
-  account.
+- **Chats survive restarts.** Remote Control keeps one fixed session on this machine.
+  It stays in your chat list, shows as offline while the app is stopped, and continues
+  after the next start. With `max_sessions: 1` this is your only session; raise it to
+  start more sessions in parallel. *Experimental:* not tested with a Claude account.
 - **One task, then `/clear`.** Finish a task in a session, then send `/clear` to start
   the next one with an empty context. That keeps answers focused and saves tokens.
   Starting a new session in the Claude app works too.

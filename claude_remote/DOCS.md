@@ -22,8 +22,9 @@ through [ha-mcp](https://github.com/homeassistant-ai/ha-mcp).
 
 The app answers the workspace trust and Remote Control questions by itself. When the
 app stops, Remote Control ends its sessions and shows this machine as offline in the
-Claude app; the next start reconnects the same entry with its sessions, so your chats
-are still there. Finish a task, then send `/clear` (or start a new session) for the
+Claude app; the next start resumes it. Remote Control keeps one fixed session in
+`/data/workspace` for this: it stays in your chat list (offline while the app is
+stopped) and continues after the next start. Finish a task, then send `/clear` (or start a new session) for the
 next one. The **Sign out** button on the page stops Remote Control and removes the
 Claude login. When the
 sign-in expires, you get the same notification and use the same page.
@@ -42,7 +43,7 @@ usual.
 | `permission_mode` | `default` | `default` asks before every change, `plan` only plans, `acceptEdits` applies file edits without asking. |
 | `model` | (empty) | Optional model or alias, for example `sonnet`. |
 | `language` | (empty) | Language Claude answers in, for example `german`. Empty = Claude decides. Written to Claude Code's `language` setting at every start. |
-| `max_sessions` | `1` | Concurrent sessions. Each one is its own Claude process. |
+| `max_sessions` | `1` | Concurrent sessions, including the fixed session that survives restarts. Each one is its own Claude process. |
 | `max_memory_mb` | `1024` | Stop Claude if all processes of this app together use more private memory (RSS without shared pages). |
 | `min_free_mb` | `150` | Stop Claude if the host has less free memory, so Home Assistant keeps running. `0` = off. |
 | `enable_ha_mcp` | `true` | Give Claude access to Home Assistant through ha-mcp. |
